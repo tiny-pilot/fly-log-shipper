@@ -37,11 +37,17 @@ defined in `vector-configs/vector.toml`. Not doing so will result in health chec
   internal_port = 8686
 ```
 
-----
+---
 
 Set the secrets below associated with your desired log destination
 
 ## Provider configuration
+
+### AppSignal
+
+| Secret                   | Description            |
+| ------------------------ | ---------------------- |
+| `APPSIGNAL_PUSH_API_KEY` | AppSignal push API key |
 
 ### AWS S3
 
@@ -56,16 +62,28 @@ Set the secrets below associated with your desired log destination
 ### Axiom
 
 | Secret          | Description   |
-| ----------------| --------------|
+| --------------- | ------------- |
 | `AXIOM_TOKEN`   | Axiom token   |
 | `AXIOM_DATASET` | Axiom dataset |
+
+### Better Stack Logs (formerly Logtail)
+
+| Secret                      | Description                    |
+|-----------------------------|--------------------------------|
+| `BETTER_STACK_SOURCE_TOKEN` | Better Stack Logs source token |
 
 ### Datadog
 
 | Secret            | Description                                   |
-| ----------------- | ----------------------------------------------|
+| ----------------- | --------------------------------------------- |
 | `DATADOG_API_KEY` | API key for your Datadog account              |
 | `DATADOG_SITE`    | (optional) The Datadog site. ie: datadoghq.eu |
+
+### Highlight
+
+| Secret                 | Description          |
+| ---------------------- | -------------------- |
+| `HIGHLIGHT_PROJECT_ID` | Highlight Project ID |
 
 ### Honeycomb
 
@@ -81,6 +99,12 @@ Set the secrets below associated with your desired log destination
 | `HUMIO_TOKEN`    | Humio token                             |
 | `HUMIO_ENDPOINT` | (optional) Endpoint URL to send logs to |
 
+### HyperDX
+
+| Secret            | Description     |
+| ----------------- | --------------- |
+| `HYPERDX_API_KEY` | HyperDX API key |
+
 ### Logdna
 
 | Secret           | Description    |
@@ -93,12 +117,6 @@ Set the secrets below associated with your desired log destination
 | ----------------------- | ------------------------------------------------------- |
 | `LOGFLARE_API_KEY`      | Logflare ingest API key                                 |
 | `LOGFLARE_SOURCE_TOKEN` | Logflare source token (uuid on your Logflare dashboard) |
-
-### Logtail
-
-| Secret          | Description        |
-| --------------- | ------------------ |
-| `LOGTAIL_TOKEN` | Logtail auth token |
 
 ### Loki
 
@@ -116,12 +134,15 @@ One of these is required for New Relic logs. New Relic recommend the license key
 | ----------------------- | -------------------------------- |
 | `NEW_RELIC_INSERT_KEY`  | (optional) New Relic Insert key  |
 | `NEW_RELIC_LICENSE_KEY` | (optional) New Relic License key |
+| `NEW_RELIC_REGION`      | (optional) eu or us (default us) |
+| `NEW_RELIC_ACCOUNT_ID`  | New Relic Account Id             |
 
 ### Papertrail
 
 | Secret                | Description         |
 | --------------------- | ------------------- |
 | `PAPERTRAIL_ENDPOINT` | Papertrail endpoint |
+| `PAPERTRAIL_ENCODING_CODEC` | Papertrail codec (default is "json") |
 
 ### Sematext
 
@@ -132,10 +153,15 @@ One of these is required for New Relic logs. New Relic recommend the license key
 
 ### Uptrace
 
-| Secret            | Description        |
-| ----------------- | ------------------ |
-| `UPTRACE_API_KEY` | Uptrace API key    |
-| `UPTRACE_PROJECT` | Uptrace project ID |
+| Secret                  | Description        |
+| -----------------       | ------------------ |
+| `UPTRACE_API_KEY`       | Uptrace API key    |
+| `UPTRACE_PROJECT`       | Uptrace project ID |
+| `UPTRACE_SINK_INPUT`    | `"log_json"`, etc. |
+| `UPTRACE_SINK_ENCODING` | `"json"`, etc.     |
+
+For UPTRACE_SINK_ENCODING Vector expects one of `avro`, `gelf`, `json`, `logfmt`, `native`,
+`native_json`, `raw_message`, `text` for key `sinks.uptrace`.
 
 ### EraSearch
 
@@ -144,6 +170,24 @@ One of these is required for New Relic logs. New Relic recommend the license key
 | `ERASEARCH_URL`   | EraSearch Endpoint              |
 | `ERASEARCH_AUTH`  | EraSearch User                  |
 | `ERASEARCH_INDEX` | EraSearch Index you want to use |
+
+### HTTP
+
+| Secret       | Description            |
+| ------------ | ---------------------- |
+| `HTTP_URL`   | HTTP/HTTPS Endpoint    |
+| `HTTP_TOKEN` | HTTP Bearer auth token |
+
+### Slack ( experimental )
+
+HTTP sink that can be used for sending log alerts to Slack.
+
+| Secret                 | Description            |
+| ---------------------- | ---------------------- |
+| `SLACK_WEBHOOK_URL`    | Slack WebHook URL      |
+| `SLACK_ALERT_KEYWORDS` | Keywords to alert on   |
+
+Example for setting keywords `fly secrets set SLACK_ALERT_KEYWORDS="[r'SIGTERM', r'reboot']"`
 
 ---
 
@@ -161,9 +205,9 @@ Any fly app can connect to the NATs server on `nats://[fdaa::3]:4223` (IPV6).
 
 **Note: you will need to supply a user / password.**
 
-> **User**: is your Fly organisation slug, which you can obtain from `fly orgs list` > **Pass**: is your fly token, which you can obtain from `fly auth token`
+> **User**: is your Fly organisation slug, which you can obtain from `fly orgs list` > **Password**: is your fly token, which you can obtain from `fly auth token`
 
-#### Example using the NATs client
+### Example using the NATs client
 
 Launch a nats client based on the nats-server image
 
@@ -179,8 +223,8 @@ fly -a nats-client ssh console
 
 ```
 nats context add nats --server [fdaa::3]:4223 --description "NATS Demo" --select \
-   --user <YOUR FLY ORG SLUG>
-   --pass <YOUR PAT>
+  --user <YOUR FLY ORG SLUG> \
+  --password <YOUR PAT>
 ```
 
 ```

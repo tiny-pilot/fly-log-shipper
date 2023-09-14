@@ -1,8 +1,8 @@
-[sinks.logtail]
+[sinks.http]
   type = "http"
   inputs = ["log_json"]
-  uri = "https://in.logtail.com"
+  uri = "${HTTP_URL}"
   encoding.codec = "json"
   auth.strategy = "bearer"
-  auth.token = "${LOGTAIL_TOKEN}"
+  auth.token = "${HTTP_TOKEN}"
 
